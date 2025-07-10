@@ -96,6 +96,9 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            // Přidělení role "user" nově registrovanému uživateli
+            await _userManager.AddToRoleAsync(user, "user");
+
             await _signInManager.SignInAsync(user, isPersistent: false);
             return RedirectToAction("Index", "Home");
         }

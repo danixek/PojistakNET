@@ -9,14 +9,14 @@ public class RegisterViewModel
 
     [Required(ErrorMessage = "Jméno je povinné.")]
     [StringLength(50, ErrorMessage = "Jméno musí mít maximálně 50 znaků.")]
-    [RegularExpression(@"^[\p{L} \-]+$", ErrorMessage = "Jméno může obsahovat pouze písmena.")]
+ // [RegularExpression(@"^[\p{L} \-]+$", ErrorMessage = "Jméno může obsahovat pouze písmena.")]
     [Display(Name = "Jméno")]
     public required string FirstName { get; set; }
 
 
     [Required(ErrorMessage = "Příjmení je povinné.")]
     [StringLength(50, ErrorMessage = "Příjmení musí mít maximálně 50 znaků.")]
-    [RegularExpression(@"^[\p{L} \-]+$", ErrorMessage = "Příjmení může obsahovat pouze písmena.")]
+ // [RegularExpression(@"^[\p{L} \-]+$", ErrorMessage = "Příjmení může obsahovat pouze písmena.")]
     [Display(Name = "Příjmení")]
     public required string LastName { get; set; }
 
@@ -68,7 +68,7 @@ public class RegisterViewModel
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [Display(Name = "Datum narození")]
-    [Range(typeof(DateTime), "1900-01-01", "2100-12-31", ErrorMessage = "Datum narození musí být mezi 1. lednem 1900 a 31. prosincem 2100.")]
+//  [Range(typeof(DateTime), "1900-01-01", "2100-12-31", ErrorMessage = "Datum narození musí být mezi 1. lednem 1900 a 31. prosincem 2100.")]
     public DateTime DateOfBirth { get; set; }
 
 
@@ -78,7 +78,7 @@ public class RegisterViewModel
     [Display(Name = "Telefonní číslo")]
     public required string PhoneNumber { get; set; }
 
-    [Range(typeof(bool), "true", "true", ErrorMessage = "Musíte souhlasit s podmínkami.")]
+//  [Range(typeof(bool), "true", "true", ErrorMessage = "Musíte souhlasit s podmínkami.")]
     [Display(Name = "Souhlasím s podmínkami")]
     public bool AcceptTerms { get; set; }
 }

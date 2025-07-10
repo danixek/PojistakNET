@@ -21,7 +21,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // případné nastavení Identity options
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -38,6 +42,15 @@ builder.Services.AddRouting(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await IdentityDataSeeder.SeedRolesAsync(services);
+    await IdentityDataSeeder.EnsureFirstUserIsSuperAdmin(services);
+}
+
 
 // UnderDevelopment middleware to show a warning message
 app.Use(async (context, next) =>
