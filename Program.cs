@@ -43,15 +43,6 @@ builder.Services.AddRouting(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    await IdentityDataSeeder.SeedRolesAsync(services);
-    await IdentityDataSeeder.EnsureFirstUserIsSuperAdmin(services);
-}
-
-
 // UnderDevelopment middleware to show a warning message
 app.Use(async (context, next) =>
 {

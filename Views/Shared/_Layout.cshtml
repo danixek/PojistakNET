@@ -74,9 +74,12 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="account" asp-action="login">Přihlásit</a>
                             </li>
+                            @if (!(User.IsInRole("superadmin") || User.IsInRole("admin")))
+                            {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="account" asp-action="register">Registrovat</a>
                             </li>
+                            }
                         }
 
                         <!-- Theme toggle button -->
@@ -133,7 +136,21 @@
 
     <footer id="contact" class="footer pojistak-section-dark mt-auto py-5">
         <div class="container footer-content">
-            <h3 class="w-100">Kontakt</h3>
+            <div class="row">
+                <div class="col-6">
+                    <h3 class="w-100">Kontakt</h3>
+                </div>
+                <div class="col-6 d-flex align-items-center">
+                    <div class="ms-auto">
+                        @if (User.IsInRole("superadmin"))
+                        {
+                            <a class="me-3" asp-controller="admin"
+                            asp-action="index">Správa účtů</a>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
             <div class="contact-info col-6">
                 
