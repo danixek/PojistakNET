@@ -10,4 +10,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     {
     }
+
+    public DbSet<LogEntry> LogEntries { get; set; }
+    public DbSet<LogEntry> Articles { get; set; }
 }

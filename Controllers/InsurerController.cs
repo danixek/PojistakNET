@@ -1,12 +1,14 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PojistakNET.Models;
 using Microsoft.EntityFrameworkCore;
+using PojistakNET.Models;
+using System.Diagnostics;
 using X.PagedList;
 using X.PagedList.Extensions;
 
 namespace PojistakNET.Controllers;
 
+[Authorize(Roles = "superadmin,admin")]
 public class InsurerController : Controller
 {
     // InsurerController spravuje JEN samotné pojištěnce,

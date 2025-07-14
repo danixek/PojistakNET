@@ -2,6 +2,23 @@
 @{
     ViewData["Title"] = "Články";
 }
-
+@* @model IEnumerable<YourNamespace.Models.Article> *@
 @await Html.PartialAsync("~/Views/Shared/_Articles.cshtml")
 
+@if (!Model.Any())
+{
+    <p>Žádné články k dispozici.</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var article in Model)
+        {
+            <a asp-action="Article" asp-route-id="@article.Id" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">@article.Title</h5>
+                <small class="text-muted">@article.CreatedAt.ToString("dd.MM.yyyy")</small>
+                <p class="mb-1">@article.Summary</p>  <!-- předpokládám, že máš Summary nebo podobné -->
+            </a>
+        }
+    </div>
+}

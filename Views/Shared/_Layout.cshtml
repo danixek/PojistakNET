@@ -24,36 +24,46 @@
 
                 <!-- Brand: logo + název -->
                 <a class="d-flex align-items-center navbar-brand me-4 text-decoration-none" asp-area=""
-                    asp-controller="Home" asp-action="Index">
+                   asp-controller="Home" asp-action="Index">
                     <img src="~/img/PojistakNET_logo1.png" alt="Logo Pojišťák.NET"
-                        style="width: 40px; height: 40px; object-fit: cover; margin-right: 0.5rem;">
+                         style="width: 40px; height: 40px; object-fit: cover; margin-right: 0.5rem;">
                     <span class="fw-semibold fs-5">Pojišťák.NET</span>
                 </a>
 
                 <!-- Toggle Button for Mobile -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <!-- Main Navigation -->
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link @(Context.Request.Path.Value?.Contains("insurer") == true ? "active" : "")"
-                                asp-area="" asp-controller="insurer" asp-action="insurer">Pojištěnci</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(Context.Request.Path.Value?.Contains("insurance") == true ? "active" : "")"
-                                asp-area="" asp-controller="insurance" asp-action="insurance">Pojištění</a>
-                        </li>
+                        @if ((User.IsInRole("superadmin") || User.IsInRole("admin")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(Context.Request.Path.Value?.Contains("insurer") == true ? "active" : "")"
+                                   asp-area="" asp-controller="insurer" asp-action="insurer">Pojištěnci</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Context.Request.Path.Value?.Contains("insurance") == true ? "active" : "")"
+                                   asp-area="" asp-controller="insurance" asp-action="insurance">Pojištění</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(Context.Request.Path == "/" || Context.Request.Path == "/Home" || Context.Request.Path == "/Home/Index" ? "active" : "")"
+                                   asp-area="" asp-controller="Home" asp-action="index">Hlavní stránka</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.Value?.Contains("articles") == true ? "active" : "")"
-                                asp-area="" asp-controller="home" asp-action="articles">Články</a>
+                               asp-area="" asp-controller="home" asp-action="articles">Články</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.Value?.Contains("about") == true ? "active" : "")"
-                                asp-area="" asp-controller="home" asp-action="about">O nás</a>
+                               asp-area="" asp-controller="home" asp-action="about">O nás</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#contact">Kontakt</a>
@@ -76,17 +86,17 @@
                             </li>
                             @if (!(User.IsInRole("superadmin") || User.IsInRole("admin")))
                             {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="account" asp-action="register">Registrovat</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="account" asp-action="register">Registrovat</a>
+                                </li>
                             }
                         }
 
                         <!-- Theme toggle button -->
                         <li class="nav-item mt-1">
                             <button id="theme-toggle" class="btn btn-outline-secondary btn-sm" data-bs-tooltip="tooltip"
-                                data-bs-placement="bottom" style="border-color: transparent"
-                                aria-label="Změnit vzhled stránky" data-bs-original-title="Změnit vzhled stránky">
+                                    data-bs-placement="bottom" style="border-color: transparent"
+                                    aria-label="Změnit vzhled stránky" data-bs-original-title="Změnit vzhled stránky">
                                 <i class="bi bi-circle-half"></i>
                             </button>
                         </li>
@@ -94,7 +104,39 @@
                     </ul>
                 </div>
             </div>
+
         </nav>
+
+        @if (Context.Request.Path.Value?.ToLower().Contains("/admin") == true)
+        {
+            <div class="admin-tabs position-fixed w-100" style="top: 65px; z-index: 1029;">
+                <div class="container px-3 pb-2 shadow-sm d-flex align-items-center justify-content-between">
+                    <div class="admin-label fw-semibold text-uppercase text-secondary">
+                        Administrace
+                    </div>
+                    <div class="admin-links d-flex gap-3">
+                        <a class="admin-tab-link @(Context.Request.Path.Value?.ToLower().Equals("/admin") == true || Context.Request.Path.Value?.ToLower().Equals("/admin/index") == true ? "active" : "")"
+                           asp-controller="Admin" asp-action="Index">
+                            <i class="bi bi-shield-lock-fill me-1"></i> Admini
+                        </a>
+                        <a class="admin-tab-link @(Context.Request.Path.Value?.ToLower().Contains("/admin/manageusers") == true ? "active" : "")"
+                           asp-controller="Admin" asp-action="ManageUsers">
+                            <i class="bi bi-people me-1"></i> Uživatelé
+                        </a>
+                        <a class="admin-tab-link @(Context.Request.Path.Value?.ToLower().Contains("/admin/managearticles") == true ? "active" : "")"
+                           asp-controller="Admin" asp-action="ManageArticles">
+                            <i class="bi bi-file-earmark-text me-1"></i> Články
+                        </a>
+                        <a class="admin-tab-link @(Context.Request.Path.Value?.ToLower().Contains("/admin/logs") == true ? "active" : "")"
+                           asp-controller="Admin" asp-action="Logs">
+                            <i class="bi bi-journal-text me-1"></i> Logy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+
     </header>
     @* Layout container --> ON/OFF | container-fluid/container *@
     <div class="@ViewData["LayoutContainerClass"] pojistak-section-light" style="padding-top: 90px; padding-left: 0px; padding-right: 0px">
@@ -104,7 +146,7 @@
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     @TempData["Success"]
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                        aria-label="Zavřít"></button>
+                            aria-label="Zavřít"></button>
                 </div>
             }
 
@@ -113,7 +155,7 @@
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     @TempData["Error"]
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                        aria-label="Zavřít"></button>
+                            aria-label="Zavřít"></button>
                 </div>
             }
 
@@ -121,10 +163,10 @@
             {
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <img src="~/img/warning-icon.png" alt="Warning"
-                        style="width: 24px; height: 24px; margin-right: 0.5rem;">
+                         style="width: 24px; height: 24px; margin-right: 0.5rem;">
                     @Html.Raw(warningMessage)
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                        aria-label="Zavřít"></button>
+                            aria-label="Zavřít"></button>
                 </div>
             }
         </div>
@@ -145,18 +187,18 @@
                         @if (User.IsInRole("superadmin"))
                         {
                             <a class="me-3" asp-controller="admin"
-                            asp-action="index">Správa účtů</a>
+                               asp-action="index">Administrace</a>
                         }
                     </div>
                 </div>
             </div>
 
             <div class="row">
-            <div class="contact-info col-6">
-                
-                <p>Hradčanská 12<br>Praha 1<br>410 13</p>
-                <a href="https://maps.google.com" class="link-muted">Zobrazit na mapě</a>
-            </div>
+                <div class="contact-info col-6">
+
+                    <p>Hradčanská 12<br>Praha 1<br>410 13</p>
+                    <a href="https://maps.google.com" class="link-muted">Zobrazit na mapě</a>
+                </div>
                 <div class="other-info col-6">
                     <dl>
                         <dt>Tel:</dt>

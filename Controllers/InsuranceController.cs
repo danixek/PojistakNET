@@ -1,11 +1,13 @@
 ﻿// using PojistakNET.Migrations;
-using PojistakNET.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using PojistakNET.Models;
 
 namespace PojistakNET.Controllers
 {
+    [Authorize(Roles = "superadmin,admin")]
     public class InsuranceController : Controller
     {
         // InsuranceController se zaměřuje na detail pojištěnce a pojištění
