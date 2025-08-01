@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models; // Import modelů, např. LoginViewModel
+using PojistakNET.Services;
 using System;
 
 namespace PojistakNET.Controllers;
@@ -12,17 +13,20 @@ public class AccountController : Controller
     // například Register, Login, Logout atd.
 
     // Metody pro správu účtů
+    private readonly ILogService _logService;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     public AccountController(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        ILogService logService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _roleManager = roleManager;
+        _logService = logService;    // logger pro logování
 
     }
 
@@ -46,6 +50,7 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            await _logService.LogAsync("Success", $"Uživatel {model.Username} úspěšně přihlášen.", User.Identity?.Name);
             return RedirectToAction("Index", "Insurer"); // nebo kam chceš
         }
         else
@@ -62,6 +67,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
+        await _logService.LogAsync("Success", $"Uživatel {User.Identity?.Name} se odhlásil.", User.Identity?.Name);
         return RedirectToAction("Index", "Home");
     }
 
@@ -124,11 +130,14 @@ public class AccountController : Controller
 
                 // Přidej roli superadmin
                 await _userManager.AddToRoleAsync(user, "superadmin");
+                await _logService.LogAsync("Warning", $"Uživatel {model.Username} se úspěšně registroval, a byly mu přiděleny superadmin práva.", User.Identity?.Name);
+
             }
             else
             {
                 // Přidělení role "user" nově registrovanému uživateli
                 await _userManager.AddToRoleAsync(user, "user");
+                await _logService.LogAsync("Success", $"Uživatel {model.Username} se úspěšně registroval.", User.Identity?.Name);
 
             }
 

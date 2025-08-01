@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models;
+using PojistakNET.Services;
 
 namespace PojistakNET.Controllers
 {
@@ -13,14 +14,14 @@ namespace PojistakNET.Controllers
         // InsuranceController se zaměřuje na detail pojištěnce a pojištění
         // Respektive spravuje metody pro správu pojištění daného pojištěnce
 
-        private readonly ILogger<InsuranceController> _logger;
-        private readonly InsuranceContext _context;
+        private readonly ILogService _logService;
+        private readonly InsuranceContext _insuranceContext;
 
         // Konstruktor s oběma závislostmi
-        public InsuranceController(InsuranceContext context, ILogger<InsuranceController> logger)
+        public InsuranceController(InsuranceContext context, ILogService logService)
         {
-            _context = context;  // Injikuje kontext pro práci s databází
-            _logger = logger;    // Injikuje logger pro logování
+            _insuranceContext = context;  // Injikuje kontext pro práci s databází
+            _logService = logService;    // Injikuje logger pro logování
         }
 
         // Pojištění
@@ -28,14 +29,14 @@ namespace PojistakNET.Controllers
         [Route("insurance")]
         public async Task<IActionResult> Insurance()
         {
-            var allInsurances = await _context.Insurances.ToListAsync();
+            var allInsurances = await _insuranceContext.Insurances.ToListAsync();
             return View(allInsurances);
         }
 
 
         private (string insurerName, int Id)? GetInsurerDetails(int insurerId)
         {
-            var insurerDetails = _context.Insurers
+            var insurerDetails = _insuranceContext.Insurers
                 .Where(i => i.Id == insurerId)
                 .Select(i => new { insurerName = i.FirstName + " " + i.LastName, i.Id })
                 .FirstOrDefault();
@@ -75,8 +76,8 @@ namespace PojistakNET.Controllers
             {
                 insurance.InsurerId = insurerId; // přiřazení pojištění k pojištěnci
 
-                _context.Add(insurance);
-                await _context.SaveChangesAsync();
+                _insuranceContext.Add(insurance);
+                await _insuranceContext.SaveChangesAsync();
                 return RedirectToAction("Detail", "Insurer", new { insurerId });
 
             }
@@ -90,6 +91,9 @@ namespace PojistakNET.Controllers
 
             // Zajištění, že pojištění obsahuje správné InsurerId při neúspěšné validaci
             insurance.InsurerId = insurerId;
+            TempData["Success"] = "Pojištění bylo úspěšně přiřazeno.";
+            await _logService.LogAsync("Success", $"Pojištění s ID {insurance.Id} bylo úspěšně přiřazeno pojištěnci s ID {insurance.InsurerId}", User.Identity?.Name);
+
 
             return View(insurance);
         }
@@ -98,7 +102,7 @@ namespace PojistakNET.Controllers
         [HttpGet, ActionName("Edit")]
         public async Task<IActionResult> EditInsurance(int Id, int insurerId)
         {
-            var insurance = await _context.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
             if (insurance == null)
             {
                 return NotFound();
@@ -133,7 +137,7 @@ namespace PojistakNET.Controllers
                 try
                 {
                     // Ověření, že pojištěnec existuje
-                    var insurerExists = await _context.Insurers
+                    var insurerExists = await _insuranceContext.Insurers
                         .FirstOrDefaultAsync(i => i.Id == insurance.InsurerId);
 
                     if (insurerExists == null)
@@ -143,13 +147,17 @@ namespace PojistakNET.Controllers
                     }
 
                     // Uložení změn pojištění
-                    _context.Update(insurance);
-                    await _context.SaveChangesAsync();
+                    _insuranceContext.Update(insurance);
+                    await _insuranceContext.SaveChangesAsync();
+
+                    TempData["Success"] = "Pojištění bylo úspěšně zeditováno.";
+                    await _logService.LogAsync("Success", $"Pojištění s ID {insurance.Id} pojištěnce s ID {insurance.InsurerId} bylo úspěšně zeditováno.", User.Identity?.Name);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     // Pokud pojištění neexistuje, vrať NotFound
-                    if (!_context.Insurances.Any(e => e.Id == insurance.Id))
+                    if (!_insuranceContext.Insurances.Any(e => e.Id == insurance.Id))
                     {
                         return NotFound();
                     }
@@ -169,7 +177,7 @@ namespace PojistakNET.Controllers
         [HttpGet, ActionName("Delete")]
         public async Task<IActionResult> DeleteInsurance(int Id)
         {
-            var insurance = await _context.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
             if (insurance == null)
             {
                 return NotFound();
@@ -192,12 +200,16 @@ namespace PojistakNET.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteInsuranceConfirmed(int Id)
         {
-            var insurance = await _context.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
             if (insurance != null)
             {
                 // Pokud pojištění existuje, smažeme ho
-                _context.Insurances.Remove(insurance);
-                await _context.SaveChangesAsync();
+                _insuranceContext.Insurances.Remove(insurance);
+                await _insuranceContext.SaveChangesAsync();
+
+                TempData["Success"] = $"Pojištění pojištěnce s ID {insurance.InsurerId} bylo úspěšně smazáno.";
+                await _logService.LogAsync("Success", $"Pojištění s ID {insurance.Id} pojištěnce s ID {insurance.InsurerId} bylo úspěšně smazáno.", User.Identity?.Name);
+
 
                 // Přesměrování zpět na detail pojištěnce
                 return RedirectToAction("Detail", "Insurer", new { insurerId = insurance.InsurerId });
@@ -211,7 +223,7 @@ namespace PojistakNET.Controllers
         [HttpGet, ActionName("Detail")]
         public async Task<IActionResult> DetailInsurance(int Id)
         {
-            var insurance = await _context.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
             if (insurance == null)
             {
                 return NotFound();

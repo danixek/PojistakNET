@@ -1,8 +1,9 @@
-using PojistakNET.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using PojistakNET.Models;
+using PojistakNET.Services;
 using System.Configuration;
 using System.Globalization;
 
@@ -29,6 +30,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<ILogService, LogService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

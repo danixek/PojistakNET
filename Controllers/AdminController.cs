@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models;
+using PojistakNET.Services;
 
 namespace PojistakNET.Controllers
 {
@@ -16,18 +17,19 @@ namespace PojistakNET.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ILogger<AdminController> _logger;
-        private readonly ApplicationDbContext _context;
+        private readonly ILogService _logService;
+        private readonly ApplicationDbContext _insuranceContext;
 
         public AdminController(UserManager<ApplicationUser> userManager,
                                RoleManager<IdentityRole> roleManager,
                                ILogger<AdminController> logger,
-                               ApplicationDbContext context)
+                               ApplicationDbContext context,
+                               ILogService logService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _logger = logger;
-            _context = context;
+            _logService = logService;    // Injikuje logger pro logování
+            _insuranceContext = context;
         }
 
         [HttpGet]
@@ -87,12 +89,6 @@ namespace PojistakNET.Controllers
             return View(model);
         }
 
-        // public IActionResult ManageArticles()
-        // {
-        //    var articles = _context.Articles.ToList();
-        //    return View(articles);
-        // }
-
         [HttpPost("promote/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PromoteToAdmin(string id)
@@ -101,7 +97,7 @@ namespace PojistakNET.Controllers
             if (user == null) return NotFound();
 
             await _userManager.AddToRoleAsync(user, "admin");
-            _logger.LogInformation($"User {user.UserName} was promoted to admin by {User.Identity?.Name}");
+            await _logService.LogAsync("Warning", $"Uživatel {user.UserName} byl povýšen na admina.", User.Identity?.Name);
 
             TempData["Message"] = $"Uživatel {user.UserName} povýšen na admina.";
             return RedirectToAction("Index");
@@ -114,7 +110,7 @@ namespace PojistakNET.Controllers
 
             await _userManager.RemoveFromRoleAsync(user, "admin");
 
-            _logger.LogInformation($"User {user.UserName} was demoted from admin by {User.Identity?.Name}");
+            await _logService.LogAsync("Warning", $"Adminovi {user.UserName} byla odebrána admin práva.", User.Identity?.Name);
 
             TempData["Message"] = $"Admin role odebrána uživateli {user.UserName}.";
             return RedirectToAction("ManageAdmins");
@@ -128,7 +124,7 @@ namespace PojistakNET.Controllers
             if (user == null) return NotFound();
 
             await _userManager.DeleteAsync(user);
-            _logger.LogWarning($"User {user.UserName} was deleted by {User.Identity?.Name}");
+            await _logService.LogAsync("Warning", $"Uživatel {user.UserName} byl smazán.", User.Identity?.Name);
 
             TempData["Message"] = $"Uživatel {user.UserName} byl odstraněn.";
             return RedirectToAction("Index");
@@ -138,7 +134,7 @@ namespace PojistakNET.Controllers
 
         public async Task<IActionResult> Logs()
         {
-            var logs = await _context.LogEntries.OrderByDescending(l => l.Timestamp).Take(100).ToListAsync();
+            var logs = await _insuranceContext.LogEntries.OrderByDescending(l => l.Timestamp).Take(100).ToListAsync();
             return View(logs);
         }
     }

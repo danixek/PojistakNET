@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models;
+using PojistakNET.Services;
 using System.Diagnostics;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -16,14 +17,14 @@ public class InsurerController : Controller
     //
     // Detail pojištěnce je v InsuranceController.
 
-    private readonly ILogger<InsurerController> _logger;
-    private readonly InsuranceContext _context;
+    private readonly InsuranceContext _insuranceContext;
+    private readonly ILogService _logService;
 
     // Konstruktor s oběma závislostmi
-    public InsurerController(InsuranceContext context, ILogger<InsurerController> logger)
+    public InsurerController(InsuranceContext insuranceContext, ILogService logService)
     {
-        _context = context;  // Injikuje kontext pro práci s databází
-        _logger = logger;    // Injikuje logger pro logování
+        _insuranceContext = insuranceContext;  // Injikuje kontext pro práci s databází
+        _logService = logService;  // Injikuje kontext pro logování
     }
 
     // Pojištěnci
@@ -36,12 +37,9 @@ public class InsurerController : Controller
         int pageNumber = page ?? 1; // Pokud není stránka definována, vezmeme první stránku
 
         // Načte seznam pojištěnců z databáze, stránkování přímo na úrovni databáze
-        var insurersPagedList = _context.Insurers
+        var insurersPagedList = _insuranceContext.Insurers
             .OrderBy(i => i.LastName) // Řadíme podle příjmení
             .ToPagedList(pageNumber, pageSize); // Aplikujeme stránkování
-
-        // Přidání logování pro diagnostiku
-        _logger.LogInformation("Pojištěnci načteni: " + insurersPagedList.Count);
 
         // Předání seznamu pojištěnců do view
         return View(insurersPagedList);
@@ -55,19 +53,20 @@ public class InsurerController : Controller
 
     // Zpracuje odeslaný formulář a přidá nového pojištěnce do databáze
     [HttpPost, ActionName("Add")]
-    public IActionResult AddInsurer(Insurer insurer)
+    public async Task<IActionResult> AddInsurer(Insurer insurer)
     {
         if (ModelState.IsValid)
         {
             // Odstraní mezery z telefonního čísla
             insurer.Phone = insurer.Phone.Replace(" ", "");
 
-            _context.Insurers.Add(insurer);
-            _context.SaveChanges();
+            _insuranceContext.Insurers.Add(insurer);
+            _insuranceContext.SaveChanges();
 
             // Logování úspěšného přidání            
             TempData["Success"] = "Přidání pojištěnce proběhlo úspěšně.";
-            _logger.LogInformation("Pojištěnec přidán: {FirstName} {LastName}", insurer.FirstName, insurer.LastName);
+            await _logService.LogAsync("Success", "Přidání pojištěnce proběhlo úspěšně.", User.Identity?.Name);
+
 
             return RedirectToAction("Insurer"); // Přesměrování po úspěšném přidání
         }
@@ -75,8 +74,11 @@ public class InsurerController : Controller
         {
             // Logování chyb při validaci
             TempData["Error"] = "Přidání pojištěnce se nezdařilo. Zkontrolujte zadané údaje.";
-            _logger.LogWarning("Přidání pojištěnce selhalo: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            await _logService.LogAsync("Error", "Přidání pojištěnce se nezdařilo.", User.Identity?.Name);
+
         }
+
+
 
         return View("Add", insurer); // Zobrazí formulář znovu, pokud validace selže
     }
@@ -86,7 +88,7 @@ public class InsurerController : Controller
     [HttpGet, ActionName("Edit")]
     public IActionResult EditInsurer(int insurerId)
     {
-        var insurer = _context.Insurers.Find(insurerId);
+        var insurer = _insuranceContext.Insurers.Find(insurerId);
         if (insurer == null)
         {
             return NotFound();
@@ -97,7 +99,7 @@ public class InsurerController : Controller
     // POST: Edit
     [HttpPost, ActionName("Edit")]
     [ValidateAntiForgeryToken]
-    public IActionResult EditInsurer(int Id, [Bind("Id,FirstName,LastName,Email,Phone,Street,City,Postcode")] Insurer insurer)
+    public async Task<IActionResult> EditInsurer(int Id, [Bind("Id,FirstName,LastName,Email,Phone,Street,City,Postcode")] Insurer insurer)
     {
         if (Id != insurer.Id)
         {
@@ -108,18 +110,20 @@ public class InsurerController : Controller
         {
             try
             {
-                _context.Update(insurer);
-                _context.SaveChanges();
+                _insuranceContext.Update(insurer);
+                _insuranceContext.SaveChanges();
                 return RedirectToAction("Index", "Insurer");
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Insurers.Any(e => e.Id == insurer.Id))
+                if (!_insuranceContext.Insurers.Any(e => e.Id == insurer.Id))
                 {
                     return NotFound();
                 }
                 else
                 {
+                    TempData["Success"] = "Editace pojištěnce proběhla úspěšně.";
+                    await _logService.LogAsync("Success", "Editace pojištěnce (ID {insurer.Id} proběhla úspěšně.", User.Identity?.Name);
                     throw;
                 }
             }
@@ -131,7 +135,7 @@ public class InsurerController : Controller
     [HttpGet, ActionName("Delete")]
     public IActionResult DeleteInsurer(int insurerId)
     {
-        var insurer = _context.Insurers
+        var insurer = _insuranceContext.Insurers
             .Find(insurerId);
 
         if (insurer == null)
@@ -145,10 +149,10 @@ public class InsurerController : Controller
     // POST: Delete
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(int Id)
+    public async Task<IActionResult> DeleteConfirmed(int Id)
     {
         // Najít pojištěnce skrze id a email
-        var insurer = _context.Insurers
+        var insurer = _insuranceContext.Insurers
             .Find(Id);
         if (insurer == null)
         {
@@ -157,15 +161,18 @@ public class InsurerController : Controller
 
         try
         {
-            _context.Insurers.Remove(insurer);
-            _context.SaveChanges();
+            _insuranceContext.Insurers.Remove(insurer);
+            await _insuranceContext.SaveChangesAsync();
+            TempData["Success"] = "Smazání pojištěnce proběhlo úspěšně.";
+            await _logService.LogAsync("Success", "Smazání pojištěnce (ID {insurer.Id} proběhlo úspěšně.", User.Identity?.Name);
         }
-        catch (Exception ex)
+        catch
         {
-            // Logování chyb
-            _logger.LogError(ex, "Chyba při mazání pojištěnce s ID {Id}", Id);
+            await _logService.LogAsync("Error", $"Pojištěnec (ID {insurer?.Id}) nebyl úspěšně smazán.", User.Identity?.Name);
+
             return StatusCode(500, "Chyba serveru. Záznam nebyl smazán.");
         }
+
 
         return RedirectToAction("Index", "Insurer");
     }
@@ -181,7 +188,7 @@ public class InsurerController : Controller
     [HttpGet, ActionName("Detail")]
     public IActionResult DetailInsurer(int insurerId)
     {
-        var insurer = _context.Insurers
+        var insurer = _insuranceContext.Insurers
             .Include(i => i.Insurances)  // Načteme také pojištění (vztah 1:N)
             .FirstOrDefault(i => i.Id == insurerId);  // Získáme prvního pojištěnce s tímto ID
 

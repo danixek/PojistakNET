@@ -8,20 +8,20 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Čas</th>
             <th>Úroveň</th>
             <th>Uživatel</th>
             <th>Zpráva</th>
+            <th>Čas</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var log in Model)
         {
-            <tr>
-                <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <tr class="log-label @log.Level.ToLower()">
                 <td>@log.Level</td>
-                <td>@log.UserName ?? "Anonymní"</td>
+                <td>@log.UserName</td>
                 <td>@log.Message</td>
+                <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
             </tr>
         }
     </tbody>
