@@ -403,7 +403,7 @@ C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\refint\PojistakNET.dll
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\PojistakNET.pdb
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\PojistakNET.genruntimeconfig.cache
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\ref\PojistakNET.dll
-C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\compressed\w68uowd95g-japezt6lps.gz
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\compressed\llu2ose341-q4ew5ks57a.gz
 C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\compressed\bog6snm8mk-q851rrmksu.gz
+C:\Users\danix\source\repos\PojistakNET\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
