@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models;
 using PojistakNET.Services;
 using System.Diagnostics;
-using X.PagedList;
 using X.PagedList.Extensions;
 
 namespace PojistakNET.Controllers;
@@ -29,6 +28,7 @@ public class InsurerController : Controller
 
     // Pojištěnci
     [HttpGet]
+    [ActionName("Index")]
     [Route("insurer")]
     public IActionResult Insurer(int? page)
     {
@@ -68,7 +68,7 @@ public class InsurerController : Controller
             await _logService.LogAsync("Success", "Přidání pojištěnce proběhlo úspěšně.", User.Identity?.Name);
 
 
-            return RedirectToAction("Insurer"); // Přesměrování po úspěšném přidání
+            return RedirectToAction("Index"); // Přesměrování po úspěšném přidání
         }
         else
         {
@@ -99,9 +99,9 @@ public class InsurerController : Controller
     // POST: Edit
     [HttpPost, ActionName("Edit")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditInsurer(int Id, [Bind("Id,FirstName,LastName,Email,Phone,Street,City,Postcode")] Insurer insurer)
+    public async Task<IActionResult> EditInsurer(int id, [Bind("Id,FirstName,LastName,Email,Phone,Street,City,Postcode")] Insurer insurer)
     {
-        if (Id != insurer.Id)
+        if (id != insurer.Id)
         {
             return NotFound();
         }
@@ -149,11 +149,11 @@ public class InsurerController : Controller
     // POST: Delete
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int Id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         // Najít pojištěnce skrze id a email
         var insurer = _insuranceContext.Insurers
-            .Find(Id);
+            .Find(id);
         if (insurer == null)
         {
             return NotFound();
@@ -168,7 +168,7 @@ public class InsurerController : Controller
         }
         catch
         {
-            await _logService.LogAsync("Error", $"Pojištěnec (ID {insurer?.Id}) nebyl úspěšně smazán.", User.Identity?.Name);
+            await _logService.LogAsync("Error", $"Pojištěnec (ID {insurer.Id}) nebyl úspěšně smazán.", User.Identity?.Name);
 
             return StatusCode(500, "Chyba serveru. Záznam nebyl smazán.");
         }

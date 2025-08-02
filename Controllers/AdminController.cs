@@ -9,25 +9,20 @@ namespace PojistakNET.Controllers
 {
     [Authorize(Roles = "superadmin")]
     public class AdminController : Controller
-
-    /// Superadmin může spravovat všechny uživatele (včetně adminů) a role v systému.
-    /// Má k dispozici i logování - kontrola administrativních akcí.
-    /// A také může přidělovat role, mazat, registrovat
-    /// a editovat uživatele či dokonce přidávat nové články.
     {
+        /// Superadmin může spravovat všechny uživatele (včetně adminů) a role v systému.
+        /// Má k dispozici i logování - kontrola administrativních akcí.
+        /// A také může přidělovat role, mazat, registrovat
+        /// a editovat uživatele či dokonce přidávat nové články.
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogService _logService;
         private readonly ApplicationDbContext _insuranceContext;
 
         public AdminController(UserManager<ApplicationUser> userManager,
-                               RoleManager<IdentityRole> roleManager,
-                               ILogger<AdminController> logger,
                                ApplicationDbContext context,
                                ILogService logService)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _logService = logService;    // Injikuje logger pro logování
             _insuranceContext = context;
         }
@@ -52,7 +47,7 @@ namespace PojistakNET.Controllers
                 {
                     Id = user.Id,
                     UserName = user.UserName!,
-                    FullName = user.FullName!,
+                    FullName = user.FullName,
                     Email = user.Email!,
                     IsAdmin = isAdmin,
                     IsSuperAdmin = isSuperAdmin
@@ -79,7 +74,7 @@ namespace PojistakNET.Controllers
                 {
                     Id = user.Id,
                     UserName = user.UserName!,
-                    FullName = user.FullName!,
+                    FullName = user.FullName,
                     Email = user.Email!,
                     IsAdmin = isAdmin,
                     IsSuperAdmin = isSuperAdmin
@@ -100,7 +95,7 @@ namespace PojistakNET.Controllers
             await _logService.LogAsync("Warning", $"Uživatel {user.UserName} byl povýšen na admina.", User.Identity?.Name);
 
             TempData["Message"] = $"Uživatel {user.UserName} povýšen na admina.";
-            return RedirectToAction("Index");
+            return RedirectToAction("ManageUsers");
         }
         [HttpPost]
         public async Task<IActionResult> DemoteFromAdmin(string id)
@@ -113,7 +108,7 @@ namespace PojistakNET.Controllers
             await _logService.LogAsync("Warning", $"Adminovi {user.UserName} byla odebrána admin práva.", User.Identity?.Name);
 
             TempData["Message"] = $"Admin role odebrána uživateli {user.UserName}.";
-            return RedirectToAction("ManageAdmins");
+            return RedirectToAction("Index");
         }
 
 
@@ -129,6 +124,18 @@ namespace PojistakNET.Controllers
             TempData["Message"] = $"Uživatel {user.UserName} byl odstraněn.";
             return RedirectToAction("Index");
         }
+        [ActionName("Create")]
+        public IActionResult CreateUserByAdmin(string role)
+        {
+            var model = new RegisterViewModel
+            {
+                Role = role // Předáme jako výchozí
+            };
+
+            ViewBag.IsAdminCreating = true; // Pro form nebo view logiku
+            return View("~/Views/Account/Register.cshtml", model); // Používá stejný view jako běžná registrace
+        }
+
 
         // atd. – zablokování, přidání role, výpis logu...
 

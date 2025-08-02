@@ -43,7 +43,7 @@
 
 <!-- Přidáme stránkovací navigaci -->
 <div class="d-flex justify-content-center">
-    @Html.PagedListPager(Model, page => Url.Action("insurer", new { page }), new PagedListRenderOptions
+    @Html.PagedListPager(Model, page => Url.Action("index", new { page }), new PagedListRenderOptions
     {
         UlElementClasses = new[] { "pagination" }, // Aplikace Bootstrap třídy
         LiElementClasses = new[] { "page-item" }, // Aplikace Bootstrap třídy na <li>

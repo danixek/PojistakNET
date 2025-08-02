@@ -1,7 +1,6 @@
 ﻿// using PojistakNET.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models;
 using PojistakNET.Services;
@@ -78,6 +77,9 @@ namespace PojistakNET.Controllers
 
                 _insuranceContext.Add(insurance);
                 await _insuranceContext.SaveChangesAsync();
+                TempData["Success"] = "Pojištění bylo úspěšně přiřazeno.";
+                await _logService.LogAsync("Success", $"Pojištění s ID {insurance.Id} bylo úspěšně přiřazeno pojištěnci s ID {insurance.InsurerId}", User.Identity?.Name);
+                
                 return RedirectToAction("Detail", "Insurer", new { insurerId });
 
             }
@@ -91,18 +93,15 @@ namespace PojistakNET.Controllers
 
             // Zajištění, že pojištění obsahuje správné InsurerId při neúspěšné validaci
             insurance.InsurerId = insurerId;
-            TempData["Success"] = "Pojištění bylo úspěšně přiřazeno.";
-            await _logService.LogAsync("Success", $"Pojištění s ID {insurance.Id} bylo úspěšně přiřazeno pojištěnci s ID {insurance.InsurerId}", User.Identity?.Name);
-
 
             return View(insurance);
         }
 
         // Editace pojištění
         [HttpGet, ActionName("Edit")]
-        public async Task<IActionResult> EditInsurance(int Id, int insurerId)
+        public async Task<IActionResult> EditInsurance(int id, int insurerId)
         {
-            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(id);
             if (insurance == null)
             {
                 return NotFound();
@@ -125,9 +124,9 @@ namespace PojistakNET.Controllers
         // Uložení změn pojištění
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditInsurance(int Id, Insurance insurance)
+        public async Task<IActionResult> EditInsurance(int id, Insurance insurance)
         {
-            if (Id != insurance.Id)
+            if (id != insurance.Id)
             {
                 return NotFound();
             }
@@ -175,9 +174,9 @@ namespace PojistakNET.Controllers
 
         // Odstranění pojištění
         [HttpGet, ActionName("Delete")]
-        public async Task<IActionResult> DeleteInsurance(int Id)
+        public async Task<IActionResult> DeleteInsurance(int id)
         {
-            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(id);
             if (insurance == null)
             {
                 return NotFound();
@@ -198,9 +197,9 @@ namespace PojistakNET.Controllers
         // Potvrzení odstranění pojištění
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteInsuranceConfirmed(int Id)
+        public async Task<IActionResult> DeleteInsuranceConfirmed(int id)
         {
-            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(id);
             if (insurance != null)
             {
                 // Pokud pojištění existuje, smažeme ho
@@ -221,9 +220,9 @@ namespace PojistakNET.Controllers
 
         // Detail pojištění
         [HttpGet, ActionName("Detail")]
-        public async Task<IActionResult> DetailInsurance(int Id)
+        public async Task<IActionResult> DetailInsurance(int id)
         {
-            var insurance = await _insuranceContext.Insurances.FindAsync(Id);
+            var insurance = await _insuranceContext.Insurances.FindAsync(id);
             if (insurance == null)
             {
                 return NotFound();

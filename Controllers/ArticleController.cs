@@ -17,17 +17,7 @@ namespace PojistakNET.Controllers
             _context = context;
             _logService = logService;    // Injikuje logger pro logování
         }
-
-        // Zobraz seznam článků - uživatel
-        [AllowAnonymous]
-        public async Task<IActionResult> Articles()
-        {
-            var articles = await _context.Articles
-                .OrderByDescending(a => a.CreatedAt)
-                .ToListAsync();
-
-            return View(articles);
-        }
+        
         [AllowAnonymous]
         [Route("Home")]
         public async Task<IActionResult> Detail(int id)

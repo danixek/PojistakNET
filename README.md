@@ -1,24 +1,66 @@
-# Pojišťák.NET
+# 🧾 Pojišťák.NET – Evidence pojištění v ASP.NET
 
-Tento projekt vznikl jako závěrečný projekt rekvalifikačního kurzu u ITnetwork. 
+Tento projekt vznikl jako závěrečný úkol rekvalifikačního kurzu u ITnetwork.
 
-Původní verzi jsem vnímal jako nedotaženou, proto jsem se pustil do její revize a rozšíření,  
-aby lépe reprezentoval mé schopnosti a mohl sloužit jako ukázka mé práce pro hledání juniorní pozice v IT.
+Původní verze mi přišla funkční, ale koncepčně nedotažená – proto jsem se pustil do její revize a rozšíření,  
+aby lépe reprezentovala mé dovednosti a mohla sloužit jako ukázka pro hledání juniorní pozice v IT.
 
-## O projektu
+---
 
-Pojišťák.NET je aplikace pro evidenci pojištění, sestavená v ASP.NET Core s použitím Identity pro správu uživatelů a EF Core pro databázi.
+## 🧩 O projektu
 
-## Stav projektu
+**Pojišťák.NET** je jednoduchá webová aplikace pro evidenci pojištěnců a jejich smluv.  
+Postaveno na ASP.NET Core MVC, využívá ASP.NET Identity pro správu uživatelů a Entity Framework Core pro databázovou vrstvu.
 
-Projekt je v aktivním vývoji, probíhají průběžné úpravy architektury i kódu.
-Oproti původní verzi chci kompletně předělat uživatelské rozhraní tak,
-aby odpovídalo mému vkusu a nebylo slepou kopií zadání.
-Plánuji také přidat admin přihlašování a implementovat pokročilé funkce,
-které jsou na juniora atypické, aby projekt více vynikl.
+Aplikace demonstruje práci s autentizací, správou rolí, relacemi mezi entitami a oddělením veřejné/přihlášené části.
 
-Věřím, že tyto změny pomohou vytvořit silnější portfolio,
-které ukáže nejen mé schopnosti, ale i ochotu programovat a tvořit jedinečné.
+---
+
+## ✅ Stav projektu
+
+Projekt je **považován za dokončený** a momentálně **není v aktivním vývoji**.
+
+Základní funkcionalita je plně implementována a odpovídá běžnému očekávání pro juniorní roli v oblasti .NET vývoje.  
+Přesto existují oblasti, které by bylo možné dále rozšířit nebo zlepšit – například:
+
+- ochrana proti XSS útokům,
+- editace uživatelského profilu běžným uživatelem,
+- CI/CD pipeline a auditní logování.
+
+Tyto prvky nebyly implementovány z důvodu prioritizace stability, času a technických omezení.  
+Projekt však zůstává otevřený dalšímu vývoji v budoucnu, pokud k tomu bude motivace nebo potřeba.
+
+---
+
+## ✨ Implementované funkce
+
+- ASP.NET Identity – registrace, přihlášení, správa rolí (`User`, `Admin`, `SuperAdmin`)
+- Tvorba článků a správa účtů, včetně adminů.
+- Základní dashboard a rozlišení přístupových práv
+- CRUD operace pro správu pojištěnců a jejich pojištění
+- Logging a auditní záznamy (přihlášení, změny dat)
+- Validace formulářů
+- Oddělení veřejné a zabezpečené části aplikace
+- DI, registrace `DbContext`, základní testování
+
+---
+
+## 🟡 Potenciál pro rozšíření (neblokující)
+
+- Paging pro větší objemy dat  
+- XSS ochrana mimo vestavěné mechanismy  
+- Uživatelská editace vlastních údajů  
+- CI/CD, 2FA, responsivita, spinner, error stránky
+- oprava Helperů pro lepší UX
+
+---
+
+## 🧠 Shrnutí
+
+Projekt slouží jako ukázka praktických schopností ve vývoji webových aplikací v ASP.NET Core.  
+Splňuje náborová očekávání na úrovni juniorního vývojáře a je připravený k prezentaci v portfoliu.
+
+> 🎯 Cílem nebyla dokonalost, ale funkční, čitelný a rozšiřitelný projekt, který ukazuje reálné dovednosti – ne jen splnění šablonovitého zadání.
 
 ## Jak projekt spustit
 

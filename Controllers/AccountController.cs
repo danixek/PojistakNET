@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PojistakNET.Models; // Import modelů, např. LoginViewModel
 using PojistakNET.Services;
-using System;
 
 namespace PojistakNET.Controllers;
 
@@ -50,8 +49,8 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
-            await _logService.LogAsync("Success", $"Uživatel {model.Username} úspěšně přihlášen.", User.Identity?.Name);
-            return RedirectToAction("Index", "Insurer"); // nebo kam chceš
+            await _logService.LogAsync("Info", $"Uživatel {model.Username} úspěšně přihlášen.", model.Username);
+            return RedirectToAction("Index", "Home"); // nebo kam chceš
         }
         else
         {
@@ -67,7 +66,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        await _logService.LogAsync("Success", $"Uživatel {User.Identity?.Name} se odhlásil.", User.Identity?.Name);
+        await _logService.LogAsync("Info", $"Uživatel {User.Identity?.Name} se odhlásil.", User.Identity?.Name);
         return RedirectToAction("Index", "Home");
     }
 
@@ -83,8 +82,10 @@ public class AccountController : Controller
     // uživatelé tak mohou omylem vytvářet duplicitní účty
     // POST: /Account/Register
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model, bool isAdminCreating = false)
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
+        var isAdminCreating = User.IsInRole("admin") || User.IsInRole("superadmin");
+        
         if (!ModelState.IsValid)
             return View(model);
 
@@ -104,8 +105,6 @@ public class AccountController : Controller
             PhoneNumber = model.PhoneNumber,
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
-
         var existingUser = await _userManager.FindByEmailAsync(model.Email);
         if (existingUser != null)
         {
@@ -113,7 +112,7 @@ public class AccountController : Controller
             
             return View(model);
         }
-
+        var result = await _userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
         {
@@ -130,15 +129,33 @@ public class AccountController : Controller
 
                 // Přidej roli superadmin
                 await _userManager.AddToRoleAsync(user, "superadmin");
-                await _logService.LogAsync("Warning", $"Uživatel {model.Username} se úspěšně registroval, a byly mu přiděleny superadmin práva.", User.Identity?.Name);
+                await _logService.LogAsync("Warning", $"Uživatel {model.Username} se úspěšně registroval, a byly mu přiděleny superadmin práva.", model.Username);
 
             }
             else
             {
-                // Přidělení role "user" nově registrovanému uživateli
-                await _userManager.AddToRoleAsync(user, "user");
-                await _logService.LogAsync("Success", $"Uživatel {model.Username} se úspěšně registroval.", User.Identity?.Name);
-
+                var roleToAssign = model.Role == "admin" ? "admin" : "user";
+                
+                // Zkontroluj, že role "user" existuje
+                if (!await _roleManager.RoleExistsAsync(roleToAssign))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleToAssign));
+                }
+                
+                // Přidělení role "user" (či "admin") nově registrovanému uživateli
+                await _userManager.AddToRoleAsync(user, roleToAssign);
+                if (!isAdminCreating)
+                {
+                    await _logService.LogAsync("Success",
+                        $"Uživatel {model.Username} se úspěšně registroval. Počet uživatelů v DB: {usersCount}",
+                        model.Username);
+                }
+                else
+                {
+                    await _logService.LogAsync("Warning",
+                        $"Superadmin zaregistroval nový účet ({roleToAssign}) - {model.Username}. Počet uživatelů v DB: {usersCount}",
+                        User.Identity?.Name);
+                }
             }
 
             // Přihlášení uživatele po úspěšné registraci
@@ -154,7 +171,7 @@ public class AccountController : Controller
                 // Superadmin registruje – nechceme redirect ani automatické přihlášení
                 // Můžeš dát třeba ViewBag nebo TempData pro potvrzení úspěchu
                 ViewBag.Message = "Uživatel úspěšně vytvořen administrátorem.";
-                return View("AdminCreateSuccess"); // nebo zpět na admin UI
+                return RedirectToAction("Index", "Admin");
             }
         }
 

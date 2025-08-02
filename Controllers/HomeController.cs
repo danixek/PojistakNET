@@ -42,10 +42,10 @@ namespace PojistakNET.Controllers
         }
 
         // Kontakt - Kde je View pro kontakt?
-        public IActionResult Contact()
-        {
-            return View();
-        }
+        // public IActionResult Contact()
+        // {
+        //    return View();
+        // }
 
         // Under Development
         public IActionResult UnderDevelopment()

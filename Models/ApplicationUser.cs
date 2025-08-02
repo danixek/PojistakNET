@@ -14,7 +14,7 @@ namespace PojistakNET.Models
         /// Celé jméno uživatele.
         /// Používáme pro personalizaci komunikace, tisk smluv a reportů.
         /// </summary>
-        public required string FullName { get; set; }
+        public required string FullName { get; set; } = string.Empty;
 
         /// <summary>
         /// Adresa uživatele pro doručení dokumentů či faktur.
@@ -31,8 +31,8 @@ namespace PojistakNET.Models
 
 
         // Další vlastnosti účtu...
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
+        public required string FirstName { get; set; }  = string.Empty;
+        public required string LastName { get; set; }  = string.Empty;
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? Country { get; set; }

@@ -1,0 +1,39 @@
+﻿
+<div class="container py-5">
+
+
+    @model List<Article>
+
+    <h1>Správa článků</h1>
+
+    <a asp-controller="Article" asp-action="Create" class="btn btn-primary mb-3">Přidat článek</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Datum vytvoření</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Model)
+            {
+                <tr>
+                    <td>@article.Title</td>
+                    <td>@article.CreatedAt.ToString("g")</td>
+                    <td>
+                        <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-sm btn-warning me-2">Upravit</a>
+                        <a asp-controller="Article" asp-action="Delete" asp-route-id="@article.Id" class="btn btn-sm btn-danger">Smazat</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-12 text-end">
+            <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Zpět</a>
+        </div>
+    </div>
+</div>

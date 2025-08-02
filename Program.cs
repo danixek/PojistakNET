@@ -46,15 +46,6 @@ builder.Services.AddRouting(options =>
 
 var app = builder.Build();
 
-// UnderDevelopment middleware to show a warning message
-app.Use(async (context, next) =>
-{
-    context.Items["WarningMessage"] = "Web momentálně prochází revizí; některé části aplikace nemusí fungovat. " +
-        $"<a href='{context.Request.PathBase}/home/UnderDevelopment'>Více zde</a>.";
-
-    await next();
-});
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

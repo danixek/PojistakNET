@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PojistakNET.styles.css" asp-append-version="true" />
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -43,7 +42,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link @(Context.Request.Path.Value?.Contains("insurer") == true ? "active" : "")"
-                                   asp-area="" asp-controller="insurer" asp-action="insurer">Pojištěnci</a>
+                                   asp-area="" asp-controller="insurer" asp-action="index">Pojištěnci</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link @(Context.Request.Path.Value?.Contains("insurance") == true ? "active" : "")"
@@ -154,17 +153,6 @@
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     @TempData["Error"]
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                            aria-label="Zavřít"></button>
-                </div>
-            }
-
-            @if ((!path.StartsWithSegments("/admin") && !path.StartsWithSegments("/article")) && !string.IsNullOrEmpty(warningMessage))
-            {
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <img src="~/img/warning-icon.png" alt="Warning"
-                         style="width: 24px; height: 24px; margin-right: 0.5rem;">
-                    @Html.Raw(warningMessage)
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
                             aria-label="Zavřít"></button>
                 </div>

@@ -410,3 +410,7 @@ th, td, tr {
 .log-label.warning {
     background-color: #ffd80033 !important;
 }
+.form-control[readonly] {
+    background-color: var(--bs-body-bg);
+    color: rgba(200,200,200,0.3) !important;
+}

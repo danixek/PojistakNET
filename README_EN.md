@@ -1,22 +1,68 @@
-# Pojišťák.NET
+# 🧾 Pojišťák.NET – Insurance Records in ASP.NET
 
-This project was created as the final project of a retraining course at ITnetwork.
+This project was created as the final assignment for a retraining course at ITnetwork.
 
-I found the original version unfinished, so I started revising and expanding it
-to better showcase my skills and serve as a portfolio piece for seeking a junior IT position.
+The original version was functional but conceptually incomplete – so I decided to revisit and improve it  
+to better reflect my skills and serve as a portfolio piece for applying to junior IT positions.
 
-## About the project
+---
 
-Pojišťák.NET is an insurance management application built with ASP.NET Core, using Identity for user management and EF Core for database access.
+## 🧩 About the Project
 
-## Project status
+**Pojišťák.NET** is a simple web application for managing insurance clients and their policies.  
+It is built with ASP.NET Core MVC, using ASP.NET Identity for user authentication and Entity Framework Core as the ORM.
 
-The project is actively under development, with ongoing adjustments to architecture and code.  
-Compared to the original, I plan to completely redesign the user interface to reflect my taste rather than blindly copying the original requirements.
-I also intend to add admin login and implement advanced features that are atypical for a junior project, to make it stand out.
+The application demonstrates core concepts such as authentication, role-based authorization, entity relationships,  
+and the separation of public and authenticated areas of the website.
 
-I believe these changes will help build a stronger portfolio,  
-showing not only my skills but also my willingness to program and create unique solutions.
+---
+
+## ✅ Project Status
+
+The project is **considered complete** and is **not in active development** at the moment.
+
+All key features have been implemented to meet the expectations for a junior-level .NET developer.  
+There is still room for further enhancements, such as:
+
+- improved XSS protection,  
+- user profile management,  
+- CI/CD pipeline and audit logging.
+
+These features were left out due to prioritization of stability, time constraints, and technical limitations.  
+However, the project remains open for future improvements if needed or desired.
+
+---
+
+## ✨ Implemented Features
+
+- ASP.NET Identity – registration, login, role management (`User`, `Admin`, `SuperAdmin`)
+- Creating articles and managing accounts, including admins.
+- Basic dashboard with role-based access control
+- CRUD operations for managing insured individuals and their insurance records
+- Logging and basic audit tracking (login events, data changes)
+- Form validation
+- Clear separation of public vs. protected areas
+- Dependency Injection, `DbContext` registration, and basic testing
+
+---
+
+## 🟡 Potential Improvements (Non-blocking)
+
+- Paging support for large datasets  
+- Additional XSS protection beyond built-in mechanisms  
+- Profile editing for standard users  
+- CI/CD integration, two-factor authentication, responsive design  
+- Improved form helpers and UX refinements
+
+---
+
+## 🧠 Summary
+
+This project demonstrates practical skills in ASP.NET Core web development.  
+It meets the expectations for a junior developer portfolio and is ready for presentation to recruiters or hiring managers.
+
+> 🎯 The goal was not perfection, but a clean, functional, and extensible project that shows real-world abilities – not just a template assignment.
+
 
 ## How to run the project
 
