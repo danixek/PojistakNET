@@ -1,0 +1,19 @@
+﻿@model Article
+
+@if (Model == null)
+{
+    <p>Článek nebyl nalezen.</p>
+}
+else
+{
+    <div class="container">
+        <h1>@Model.Title</h1>
+        <p class="text-muted">@Model.CreatedAt.ToString("dd. MM. yyyy")</p>
+
+        <div class="ms-3 mb-3">
+            @Html.Raw(Model.Content)
+        </div>
+
+        <a asp-action="Articles" asp-controller="Home">← Zpět na seznam článků</a>
+    </div>
+}

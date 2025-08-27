@@ -1,0 +1,46 @@
+﻿
+<div class="container py-5">
+
+
+    @model List<Article>
+
+    <div class="row d-flex align-items-center">
+        <div class="col-8">
+            <h1 class="mb-0">Správa článků</h1>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+            <a asp-controller="Article" asp-action="Create" class="btn btn-primary mb-3 mt-3">
+                <i class="bi bi-person-badge-fill me-1"></i> Přidat článek
+            </a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Datum vytvoření</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Model)
+            {
+                <tr>
+                    <td>@article.Title</td>
+                    <td>@article.CreatedAt.ToString("g")</td>
+                    <td>
+                        <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-sm btn-warning me-2">Upravit</a>
+                        <a asp-controller="Article" asp-action="Delete" asp-route-id="@article.Id" class="btn btn-sm btn-danger">Smazat</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-12 text-end">
+            <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Zpět</a>
+        </div>
+    </div>
+</div>

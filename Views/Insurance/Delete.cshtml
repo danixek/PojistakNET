@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Smazání pojištění";
+    var insurerName = ViewBag.InsurerName; // Předané jméno pojištěnce
+}
+
+@model PojistakNET.Models.Insurance
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<h2>Smazání pojištění</h2>
+
+<h3>Jste si jisti, že chcete smazat toto pojištění od pojištěnce @insurerName?</h3>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Název:</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+        <dt class="col-sm-2">Cena:</dt>
+        <dd class="col-sm-10">@PojistakNET.Helpers.MoneyHelper.FormatMoney(Model.Cost)</dd>
+        <dt class="col-sm-2">Předmět:</dt>
+        <dd class="col-sm-10">@Model.ObjectOfInsurance</dd>
+        <dt class="col-sm-2">Platnost od:</dt>
+        <dd class="col-sm-10">@Model.ValidFrom.ToString("dd/MM/yyyy")</dd>
+        <dt class="col-sm-2">Platnost do:</dt>
+        <dd class="col-sm-10">@Model.ValidUntil.ToString("dd/MM/yyyy")</dd>
+    </dl>
+
+    <form asp-action="delete" asp-controller="insurance" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="InsurerId" />
+        <button type="submit" class="btn btn-danger">Potvrdit smazání</button>
+        <a href="@Url.Action("index", "insurer")" class="btn btn-secondary">Storno</a>
+    </form>
+</div>

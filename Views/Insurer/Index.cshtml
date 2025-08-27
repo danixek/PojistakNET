@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Seznam pojištěnců";
+}
+
+@model X.PagedList.IPagedList<PojistakNET.Models.Insurer>
+@using X.PagedList.Mvc.Core;
+
+<div class="row">
+    <div class="col-6">
+        <h2>Pojištěnci</h2>
+    </div>
+    <div class="col-6">
+        <div class="d-flex">
+            <a href="@Url.Action("add", "insurer")" class="btn btn-primary ms-auto">Nový pojištěnec</a>
+        </div>
+    </div>
+</div>
+<div class="row gy-3 my-3">
+    @foreach (var insurer in Model)
+    {
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card background-div text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">
+                            <a href="@Url.Action("detail", "insurer", new { insurerId = insurer.Id })" class="link-light text-decoration-none">
+                                @insurer.FirstName @insurer.LastName
+                            </a>
+                        </h5>
+                        <p class="card-text">@insurer.Street, @insurer.City</p>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <a href="@Url.Action("edit", "insurer", new { insurerId = insurer.Id })" class="btn btn-warning btn-sm">Editovat</a>
+                        <a href="@Url.Action("delete", "insurer", new { insurerId = insurer.Id })" class="btn btn-danger btn-sm">Odstranit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<!-- Přidáme stránkovací navigaci -->
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("index", new { page }), new PagedListRenderOptions
+    {
+        UlElementClasses = new[] { "pagination" }, // Aplikace Bootstrap třídy
+        LiElementClasses = new[] { "page-item" }, // Aplikace Bootstrap třídy na <li>
+        PageClasses = new[] { "page-link" }, // Aplikace Bootstrap třídy na odkazy <a>
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToIndividualPages = true,
+        DisplayPageCountAndCurrentLocation = false,
+        })
+</div>

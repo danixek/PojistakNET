@@ -1,0 +1,45 @@
+﻿@model List<Article>
+@{
+    ViewData["Title"] = "Články";
+}
+@* @model IEnumerable<YourNamespace.Models.Article> *@
+
+@if (!Model.Any())
+{
+    <p>Žádné články k dispozici.</p>
+}
+else
+{
+
+<section class="pojistak-section-light">
+    <div class="container py-2 pb-5">
+        <h2 class="w-100 pb-4">Články</h2>
+        <div class="row gy-4">
+            @if (Model != null)
+            {
+                @foreach (var article in Model)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="article-wrapper h-100 d-flex flex-column">
+                            <div class="pojistak-section-dark d-flex flex-column h-100">
+                                <h4>@article.Title</h4>
+                                <p>@(article.Content.Length > 120 ? article.Content.Substring(0, 120) + "..." : article.Content)</p>
+                                <div class="article-button mt-auto ms-auto">
+                                    <a href="@Url.Action("Detail", "Article", new { id = article.Id })" class="btn btn-outline-secondary">
+                                        Číst více
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Žádné články k dispozici.</p>
+            }
+        </div>
+    </div>
+</section>
+
+}

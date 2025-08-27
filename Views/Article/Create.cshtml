@@ -1,0 +1,34 @@
+﻿@model PojistakNET.Models.Article
+
+@{
+    ViewData["Title"] = "Přidat článek";
+
+}
+<div class="container py-5">
+
+
+    <h2 class="mt-2">@ViewData["Title"]</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="Title" class="control-label">Název</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Content" class="control-label">Obsah</label>
+            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Přidat článek</button>
+        <a asp-action="Index" class="btn btn-secondary mt-3">Zpět</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

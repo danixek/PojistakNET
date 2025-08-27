@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Nový pojištěnec";
+}
+
+@model PojistakNET.Models.Insurer
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+
+<h2 class="font-weight-bold mb-4">Nový pojištěnec</h2>
+
+<form asp-action="add" method="post">
+    <div class="row">
+        <div class="form-group col-md-6 pb-4 pe-4">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 pb-4 pe-4">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 pb-4 pe-4">
+            <label asp-for="Street"></label>
+            <input asp-for="Street" class="form-control" />
+            <span asp-validation-for="Street" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label asp-for="City"></label>
+            <input asp-for="City" class="form-control" />
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group offset-md-6 col-md-6">
+            <label asp-for="Postcode"></label>
+            <input asp-for="Postcode" class="form-control" />
+            <span asp-validation-for="Postcode" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary ps-4 pe-4 mt-5 font-weight-bold">Uložit</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
